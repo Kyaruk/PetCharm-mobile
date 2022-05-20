@@ -405,7 +405,7 @@ class _UserInfo extends State<UserInfo> {
       "userPhoneNumber": user.userPhoneNumber,
     });
     try {
-      var response = await Global.dio.post('userInfo/', data: formData);
+      var response = await Global.dio.post('user/', data: formData);
       if (response.statusCode == 200) {
         Navigator.pop(context, user);
       } else {

@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:pet_charm/main.dart';
 import 'package:pet_charm/models/pet.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:dio/dio.dart';
 
 class VaccinationDetail extends StatelessWidget {
   final Pet pet;
@@ -10,6 +12,60 @@ class VaccinationDetail extends StatelessWidget {
     Key? key,
     required this.pet,
   }) : super(key: key);
+
+  setToVaccinated(String set_state) async {
+    // try {
+    //   FormData formData = FormData.fromMap({"petId": pet.petId,"status":set_state});
+    //   //TODO:需要更新所有的参数和url
+    //   var response = await Global.dio.post('post/delete/', data: formData);
+    //
+    //   if (response.statusCode == 200) {
+    //
+    //     // Navigator.pushNamed(context, "home_page");
+    //   } else {
+    //     throw "Can't get posts.";
+    //   }
+    // } on DioError catch (e) {
+    //   throw Exception(e.response?.data);
+    // }
+
+    try {
+      var response = await Global.dio.post('allUnadoptedPets/');
+
+      if (response.statusCode == 200) {
+        List<dynamic> body = response.data['pets'];
+
+        List<Pet> pets =
+            body.map((dynamic item) => Pet.fromJson(item)).toList();
+
+        return pets;
+      } else {
+        throw "Can't get posts.";
+      }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data);
+    }
+
+    // Response response = await post(Uri.parse(postsUrl));
+    //
+    // if (response.statusCode == 200) {
+    //   // print("修改宠物医疗信息post请求发送成功");
+    //   List<dynamic> body = jsonDecode(response.body);
+    //
+    //   List<Pet> news = body.map((dynamic item) => Pet.fromJson(item)).toList();
+    //
+    //   // var num = 5;
+    //   // var factorial = 1;
+    //   //
+    //   // for( var i = 3 ; i >= 1; i-- ) {
+    //   //   print(news[i]);
+    //   // } //原文出自【易百教程】，商业转载请联系作者获得授权，非商业请保留原文链接：https://www.yiibai.com/dart/dart_programming_for_loop.html
+    //
+    //   return news;
+    // } else {
+    //   throw "Can't get posts.";
+    // }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,29 +102,13 @@ class VaccinationDetail extends StatelessWidget {
                 ),
                 ListTile(
                   title: const Text("Body"),
-                  subtitle: Text(pet.time),
+                  subtitle: Text(pet.petDateOfBirth),
                 ),
                 Card(
                   child: Row(
                     children: <Widget>[
                       IconButton(
-                        onPressed: () async {
-                          // User temp = User(
-                          //     user.userName,
-                          //     user.email,
-                          //     user.userIconUrl,
-                          //     user.userPhoneNumber,
-                          //     user.userType);
-                          // var result = await Navigator.push(context,
-                          //     MaterialPageRoute(builder: (context) {
-                          //   return UserInfo(user: user, temp: temp);
-                          // }));
-                          // if (user != result) {
-                          //   setState(() {
-                          //     user = result;
-                          //   });
-                          // }
-                        },
+                        onPressed: setToVaccinated(""),
                         icon: const Icon(Icons.star),
                       ),
                     ],
@@ -80,32 +120,5 @@ class VaccinationDetail extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class HomeHttp {
-  // final String postsUrl = Global.baseUrl + "test";
-  final String postsUrl = "http://43.138.31.99/api/petInfo/";
-
-  Future<List<Pet>> getHomePosts() async {
-    Response response = await post(Uri.parse(postsUrl));
-
-    if (response.statusCode == 200) {
-      // print("修改宠物医疗信息post请求发送成功");
-      List<dynamic> body = jsonDecode(response.body);
-
-      List<Pet> news = body.map((dynamic item) => Pet.fromJson(item)).toList();
-
-      // var num = 5;
-      // var factorial = 1;
-      //
-      // for( var i = 3 ; i >= 1; i-- ) {
-      //   print(news[i]);
-      // } //原文出自【易百教程】，商业转载请联系作者获得授权，非商业请保留原文链接：https://www.yiibai.com/dart/dart_programming_for_loop.html
-
-      return news;
-    } else {
-      throw "Can't get posts.";
-    }
   }
 }

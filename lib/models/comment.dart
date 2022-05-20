@@ -1,22 +1,26 @@
 class Comment {
-  final String commentUserName;
+  final String commentAuthor;
   final String commentContent;
-  final String userIconUrl;
+  final String commentIconUrl;
+  final String commentDate;
 
   Comment(
-    this.commentUserName,
+    this.commentAuthor,
     this.commentContent,
-    this.userIconUrl,
+    this.commentIconUrl,
+      this.commentDate,
   );
 
   Comment.fromJson(Map<String, dynamic> json)
-      : userIconUrl = json["userIconUrl"] ?? "",
-        commentUserName = json["commentUserName"] ?? "",
-        commentContent = json["commentContent"] ?? "";
+      : commentIconUrl = json["commentIconUrl"] ?? "",
+        commentAuthor = json["commentAuthor"] ?? "",
+        commentContent = json["commentContent"] ?? "",
+        commentDate = json["commentDate"] ?? "";
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        "userIconUrl": userIconUrl,
-        "commentUserName": commentUserName,
+        "commentIconUrl": commentIconUrl,
+        "commentAuthor": commentAuthor,
         "commentContent": commentContent,
+        "commentDate": commentDate,
       };
 }

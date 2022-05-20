@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pet_charm/user/my_posts.dart';
 import 'package:pet_charm/user/pet_info.dart';
-import 'package:pet_charm/复选框.dart';
+import 'home/set_all_pets.dart';
 import 'login/log_in.dart';
 import 'login/register_pet.dart';
 import 'login/register_userinfo.dart';
@@ -18,6 +18,8 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'common/error.dart';
 import 'package:pet_charm/user/vet_certificate.dart';
 import 'Paimon.dart';
+import 'package:pet_charm/复选框.dart';
+import 'testios.dart';
 
 void main() async {
   Global.dio.interceptors.add(CookieManager(Global.cookieJar));
@@ -47,8 +49,8 @@ class MyApp extends StatelessWidget {
         "forget_password_page": (context) => const ForgotPwd(),
         "home_page": (context) => const HomeScreen(),
         "post_page": (context) => const PostMessage(),
-        "user_info_page": (context) =>
-            UserInfo(user: User("", "", "", "", ""), temp: User("", "", "", "", "")),
+        "user_info_page": (context) => UserInfo(
+            user: User("", "", "", "", "", ""), temp: User("", "", "", "", "", "")),
         "search_page": (context) => const SearchPage(),
         "error_page": (context) => const ErrorPage(),
         "test_page": (context) => const Test(),
@@ -56,9 +58,10 @@ class MyApp extends StatelessWidget {
         "vet_cer_page": (context) => const VetCer(),
         "my_post_page": (context) => const MyPostPage(),
         "paimon_page": (context) => const Paimon(),
+        "set_all_pets": (context) => const SetPetPage(),
       },
       home: const Login(),
-      // home: const Paimon(),
+      // home: Testios(),
     );
   }
 }

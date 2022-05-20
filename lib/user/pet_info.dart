@@ -14,7 +14,7 @@ class PetInfo extends StatefulWidget {
 }
 
 class _PetInfo extends State<PetInfo> {
-  late Pet pet = Pet("", "", "", "", "");
+  late Pet pet = Pet("", "", "", "", "", "");
 
   @override
   void initState() {
@@ -25,24 +25,20 @@ class _PetInfo extends State<PetInfo> {
 
   Future<void> getPet() async {
     var response = await Global.dio.get(
-      'petInfo/',
+      'pet/',
     );
     if (response.statusCode == 200) {
       if (response.data['success']) {
         setState(() {
-          pet = Pet(
-              response.data['petName'],
-              response.data['petType'],
-              response.data['petBreed'],
-              response.data['petGender'],
-              response.data['petAge'].toString());
+          pet = Pet.fromJson(response.data['pet']);
         });
       } else {
         Navigator.of(context).pushNamed("register_page");
       }
     } else {
       setState(() {
-        pet = Pet("petName", "petType", "petBreed", "petGender", "petAge");
+        pet = Pet(
+            "petId", "petName", "petType", "petBreed", "petGender", "petAge");
       });
       // print("ERROR:\nhttp请求出现错误，错误编码为:" + response.statusCode.toString());
       toast("Http Error: " + response.statusCode.toString());
@@ -126,7 +122,7 @@ class _PetInfo extends State<PetInfo> {
               _showModalBottomSheetBreed),
           buildItem(pet.petGender, const Icon(Icons.pets, color: Colors.red),
               _showModalBottomSheetGender),
-          buildItem(pet.time, const Icon(Icons.pets, color: Colors.red),
+          buildItem(pet.petDateOfBirth, const Icon(Icons.pets, color: Colors.red),
               _showModalBottomSheetAge),
         ],
       ),
@@ -316,9 +312,9 @@ class _PetInfo extends State<PetInfo> {
       "petType": pet.petType,
       "petBreed": pet.petBreed,
       "petGender": pet.petGender,
-      "petAge": pet.time
+      "petAge": pet.petDateOfBirth
     });
-    var response = await Global.dio.post('petInfo/', data: formData);
+    var response = await Global.dio.post('pet/', data: formData);
     if (response.statusCode == 200) {
       Navigator.pop(context);
     } else {

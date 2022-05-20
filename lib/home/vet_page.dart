@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pet_charm/models/post.dart';
-import 'package:http/http.dart';
-import 'dart:convert';
+import '../main.dart';
 import 'post_detail.dart';
+import 'package:dio/dio.dart';
 
 class VetPage extends StatefulWidget {
   const VetPage({Key? key}) : super(key: key);
@@ -55,21 +55,23 @@ class _VetPage extends State<VetPage> {
 }
 
 class HomeHttp {
-  // final String postsUrl = Global.baseUrl + "test";
-  final String postsUrl = "http://43.138.31.99/api/allPosts/";
+ Future<List<Post>> getHomePosts() async {
 
-  Future<List<Post>> getHomePosts() async {
-    Response response = await get(Uri.parse(postsUrl));
+    try{
+      var response = await Global.dio.get('post/list/');
 
-    if (response.statusCode == 200) {
-      List<dynamic> body = jsonDecode(response.body)['posts'];
+      if (response.statusCode == 200) {
+        List<dynamic> body = response.data['posts'];
 
-      List<Post> news =
-      body.map((dynamic item) => Post.fromJson(item)).toList();
+        List<Post> news =
+        body.map((dynamic item) => Post.fromJson(item)).toList();
 
-      return news;
-    } else {
-      throw "Can't get posts.";
+        return news;
+      } else {
+        throw "Can't get posts.";
+      }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data);
     }
   }
 }

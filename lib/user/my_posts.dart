@@ -112,7 +112,7 @@ class _MyPostPage extends State<MyPostPage> {
 class HomeHttp {
   Future<List<Post>> getHomePosts() async {
     try {
-      var response = await Global.dio.get('userPosts/');
+      var response = await Global.dio.get('post/user/');
 
       if (response.statusCode == 200) {
         List<dynamic> body = response.data['posts'];

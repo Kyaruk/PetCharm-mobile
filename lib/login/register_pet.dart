@@ -298,7 +298,7 @@ class _RegisterPet extends State<RegisterPet> {
       "petDateOfBirth": DateTime(2002, 9, 2),
     });
     try {
-      var response = await Global.dio.post('petInfo/', data: formData);
+      var response = await Global.dio.post('pet/', data: formData);
       if (response.statusCode == 200) {
         if (response.data["success"]) {
           toast("成功添加宠物");

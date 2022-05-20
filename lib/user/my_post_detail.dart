@@ -156,11 +156,15 @@ class _PostDetail extends State<PostDetail> {
 class HomeHttp {
   Future<List<Post>> getPostComment(int postId) async {
     try {
-      FormData formData = FormData.fromMap({"postId": postId});
-      var response = await Global.dio.post('comments/', data: formData);
+      // FormData formData = FormData.fromMap({"postId": postId});
+      // var response = await Global.dio.post('comment/list/', data: formData);
+
+      Map<String, dynamic> map = <String, dynamic>{};
+      map["postId"] = postId;
+      var response = await Global.dio.get("comment/list/", queryParameters: map);
 
       if (response.statusCode == 200) {
-        List<dynamic> body = response.data['posts'];
+        List<dynamic> body = response.data['comments'];
 
         List<Post> news =
             body.map((dynamic item) => Post.fromJson(item)).toList();

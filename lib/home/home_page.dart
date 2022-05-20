@@ -95,7 +95,7 @@ class HomeHttp {
 
   Future<List<Post>> getHomePosts() async {
     try{
-      var response = await Global.dio.get('allPosts/');
+      var response = await Global.dio.get('post/list/');
 
       if (response.statusCode == 200) {
         List<dynamic> body = response.data['posts'];

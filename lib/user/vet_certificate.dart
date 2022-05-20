@@ -202,7 +202,7 @@ class _VetCer extends State<VetCer> {
 
       // 多个文件上传
       // var response = await Dio().post('10.0.0.2:5000/post/', data: formData);
-      var response = await Global.dio.post('apply/', data: formData);
+      var response = await Global.dio.post('user/apply/', data: formData);
       if (response.statusCode == 200) {
         if (response.data["success"]) {
           Navigator.pushNamed(context, "home_page");

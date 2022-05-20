@@ -59,7 +59,7 @@ class _SetPetPage extends State<SetPetPage> {
 
 class HomeHttp {
   // final String postsUrl = Global.baseUrl + "test";
-  final String postsUrl = "http://43.138.31.99/api/petInfo/";
+  final String postsUrl = "http://43.138.31.99/api/pet/";
 
   Future<List<Post>> getHomePosts() async {
     Response response = await get(Uri.parse(postsUrl));

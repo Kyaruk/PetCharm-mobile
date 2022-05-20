@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pet_charm/comment/post_comment.dart';
 import 'package:pet_charm/models/comment.dart';
 import '../main.dart';
-import '../models/comment_detail.dart';
+import 'comment_detail.dart';
 import 'package:dio/dio.dart';
 
 class CommentPage extends StatefulWidget {
@@ -31,9 +31,13 @@ class _CommentPage extends State<CommentPage> {
                   .map((Comment comment) => Card(
                           child: ListTile(
                         leading: CircleAvatar(
-                          backgroundImage: NetworkImage(comment.userIconUrl),
+                          backgroundImage: ((comment.commentIconUrl == "")
+                                  ? const AssetImage("assets/images/User.jpg")
+                                  : NetworkImage(comment.commentIconUrl))
+                              as ImageProvider,
                         ),
-                        title: Text(comment.commentUserName),
+                        title: Text(comment.commentAuthor),
+                        subtitle: Text(comment.commentDate),
                         trailing: const Icon(Icons.arrow_forward_ios),
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
@@ -84,11 +88,15 @@ class HomeHttp {
 
   Future<List<Comment>> getHomePosts() async {
     try {
-      FormData formData = FormData.fromMap({"postId": postId});
-      var response = await Global.dio.post('comments/', data: formData);
+      // FormData formData = FormData.fromMap({"postId": postId});
+      // var response = await Global.dio.post('comment/list/', data: formData);
+      Map<String, dynamic> map = <String, dynamic>{};
+      map["postId"] = postId;
+      var response =
+          await Global.dio.get("comment/list/", queryParameters: map);
 
       if (response.statusCode == 200) {
-        List<dynamic> body = response.data['posts'];
+        List<dynamic> body = response.data['comments'];
 
         List<Comment> comments =
             body.map((dynamic item) => Comment.fromJson(item)).toList();

@@ -26,6 +26,7 @@ import 'dart:convert';
 import 'package:pet_charm/models/post.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:dio/dio.dart';
 
 ///报错，先注释掉了
 
@@ -322,30 +323,22 @@ class _HomePageState extends State<MyHomePage> {
 
 class HomeHttp {
   // final String postsUrl = Global.baseUrl + "test";
-  final String postsUrl = "http://43.138.31.99/api/getAllUnadoptedPets/";
-
   Future<List<Pet>> getHomePets() async {
-    Response response = await get(Uri.parse(postsUrl));
+    try{
+      var response = await Global.dio.get('allUnadoptedPets/');
 
-    if (response.statusCode == 200) {
-      print("请求未领养宠物成功");
-      List<dynamic> body = jsonDecode(response.body)["pets"];
+      if (response.statusCode == 200) {
+        List<dynamic> body = response.data['pets'];
 
-      List<Pet> news =
-      body.map((dynamic item) => Pet.fromJson(item)).toList();
+        List<Pet> pets =
+        body.map((dynamic item) => Pet.fromJson(item)).toList();
 
-      var num = 5;
-      var factorial = 1;
-
-      for( var i = 3 ; i >= 1; i-- ) {
-        print(news[i]);
-      } //原文出自【易百教程】，商业转载请联系作者获得授权，非商业请保留原文链接：https://www.yiibai.com/dart/dart_programming_for_loop.html
-
-
-
-      return news;
-    } else {
-      throw "Can't get posts.";
+        return pets;
+      } else {
+        throw "Can't get posts.";
+      }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data);
     }
   }
 }

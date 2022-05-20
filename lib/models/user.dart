@@ -1,4 +1,5 @@
 class User {
+  String userId;
   String userName;
   String email;
   String userIconUrl;
@@ -7,17 +8,19 @@ class User {
   ///userType为固定string的枚举："兽医" "技师"
   String userType;
 
-  User(this.userName, this.email, this.userIconUrl, this.userPhoneNumber,
+  User(this.userId, this.userName, this.email, this.userIconUrl, this.userPhoneNumber,
       this.userType);
 
   User.fromJson(Map<String, dynamic> json)
-      : userName = json["userName"] ?? "",
+      : userId = json["userId"] ?? "",
+        userName = json["userName"] ?? "",
         email = json["email"] ?? "",
         userIconUrl = json["userIconUrl"] ?? "",
         userPhoneNumber = json["userPhoneNumber"] ?? "",
         userType = json["userType"] ?? "";
 
   Map<String, dynamic> toJson() => <String, dynamic>{
+        "userId": userId,
         "userName": userName,
         "email": email,
         "userIconUrl": userIconUrl,

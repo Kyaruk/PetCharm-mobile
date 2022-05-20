@@ -18,14 +18,14 @@ class _Me extends State<Me> {
   Future<User> getUser() async {
     try {
       var response = await Global.dio.get(
-        'userInfo/',
+        'user/',
       );
       if (response.statusCode == 200) {
         return User.fromJson(response.data);
       } else {
         // print("ERROR:\nhttp请求出现错误，错误编码为:" + response.statusCode.toString());
         toast("Http Error: " + response.statusCode.toString());
-        return User("", "", "", "", "");
+        return User("", "", "", "", "", "");
       }
     } on DioError catch (e) {
       throw Exception(e.response?.data);
@@ -127,7 +127,7 @@ class _Me extends State<Me> {
               child: CircleAvatar(
                 backgroundImage: ((user.userIconUrl == "")
                     ? const AssetImage("assets/images/User.jpg")
-                    : Image.network(user.userIconUrl)) as ImageProvider,
+                    : NetworkImage(user.userIconUrl)) as ImageProvider,
               ),
             ),
             Expanded(
@@ -175,7 +175,7 @@ class _Me extends State<Me> {
                       textAlign: TextAlign.center),
                 ),
                 onPressed: () async {
-                  User temp = User(user.userName, user.email, user.userIconUrl,
+                  User temp = User(user.userId, user.userName, user.email, user.userIconUrl,
                       user.userPhoneNumber, user.userType);
                   var result = await Navigator.push(context,
                       MaterialPageRoute(builder: (context) {
@@ -296,6 +296,48 @@ class _Me extends State<Me> {
               ),
               onPressed: () {
                 Navigator.of(context).pushNamed("vet_cer_page");
+              },
+            ),
+          ),
+          SizedBox(
+            width: Global.deviceSize.width * 0.25,
+            child: TextButton(
+              child: Column(
+                children: const [
+                  Expanded(
+                    child: Icon(
+                      Icons.account_box_outlined,
+                      color: Color.fromRGBO(255, 165, 170, 1),
+                    ),
+                  ),
+                  Text("兽医中心",
+                      style: TextStyle(color: Color.fromRGBO(255, 165, 170, 1)))
+                ],
+              ),
+              onPressed: () {
+                //TODO：兽医身份认证
+                Navigator.of(context).pushNamed("set_all_pets");
+              },
+            ),
+          ),
+          SizedBox(
+            width: Global.deviceSize.width * 0.25,
+            child: TextButton(
+              child: Column(
+                children: const [
+                  Expanded(
+                    child: Icon(
+                      Icons.account_box_outlined,
+                      color: Color.fromRGBO(255, 165, 170, 1),
+                    ),
+                  ),
+                  Text("遛狗地图",
+                      style: TextStyle(color: Color.fromRGBO(255, 165, 170, 1)))
+                ],
+              ),
+              onPressed: () {
+                //TODO：兽医身份认证
+                Navigator.of(context).pushNamed("set_all_pets");
               },
             ),
           ),
