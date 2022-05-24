@@ -1,20 +1,21 @@
 class Pet {
-  String petId;
+  int petId;
   String petName;
   String petType;
   String petBreed;
   String petGender;
-  String petDateOfBirth;
+  DateTime petDateOfBirth;
+
   // String vaccinatedStatus;//为0表示还未打疫苗，为1表示已经打了疫苗
 
   Pet(
-      this.petId,
+    this.petId,
     this.petName,
     this.petType,
     this.petBreed,
     this.petGender,
     this.petDateOfBirth,
-      // this.vaccinatedStatus,
+    // this.vaccinatedStatus,
   );
 
   Pet.fromJson(Map<String, dynamic> json)
@@ -24,7 +25,7 @@ class Pet {
         petBreed = json["petBreed"] ?? "",
         petGender = json["petGender"] ?? "",
         petDateOfBirth = json["petDateOfBirth"] ?? ""
-        // vaccinatedStatus = json["petVaccinatedStatus"]
+  // vaccinatedStatus = json["petVaccinatedStatus"]
   ;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -53,12 +54,12 @@ class Pet {
     petGender = _petGender;
   }
 
-  void setTime(String _petDateOfBirth) {
+  void setTime(DateTime _petDateOfBirth) {
     petDateOfBirth = _petDateOfBirth;
   }
 
-  // void setVaccinatedStatus(String _vaccinatedStatus){
-  //   vaccinatedStatus = _vaccinatedStatus;
-  // }
+// void setVaccinatedStatus(String _vaccinatedStatus){
+//   vaccinatedStatus = _vaccinatedStatus;
+// }
 
 }

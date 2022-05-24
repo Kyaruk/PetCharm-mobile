@@ -20,6 +20,7 @@ import 'package:pet_charm/user/vet_certificate.dart';
 import 'Paimon.dart';
 import 'package:pet_charm/复选框.dart';
 import 'testios.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   Global.dio.interceptors.add(CookieManager(Global.cookieJar));
@@ -36,6 +37,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter PetCharm',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,//指定本地化的字符串和一些其他的值
+        GlobalWidgetsLocalizations.delegate,//定义 widget 默认的文本方向，从左到右或从右到左。
+        GlobalCupertinoLocalizations.delegate,//对应的 Cupertino 风格（Cupertino 风格组件即 iOS 风格组件）
+      ],
+      supportedLocales: const [
+        Locale('zh', 'CH'),
+        Locale('en', 'US'),
+      ],
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
@@ -61,7 +71,7 @@ class MyApp extends StatelessWidget {
         "set_all_pets": (context) => const SetPetPage(),
       },
       home: const Login(),
-      // home: Testios(),
+      // home: RegisterPet(),
     );
   }
 }

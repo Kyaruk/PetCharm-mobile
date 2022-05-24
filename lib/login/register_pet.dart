@@ -20,9 +20,9 @@ class _RegisterPet extends State<RegisterPet> {
   final TextEditingController _petNameController = TextEditingController();
   final TextEditingController _petBreedController = TextEditingController();
   final TextEditingController _petGenderController = TextEditingController();
-  final TextEditingController _petBirthController = TextEditingController();
 
   var selectItemValue;
+  DateTime initialDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -277,8 +277,6 @@ class _RegisterPet extends State<RegisterPet> {
         toast("请输入宠物的品质");
       } else if (_petGenderController.text == "") {
         toast("请输入宠物的性别");
-      } else if (_petBirthController.text == "") {
-        toast("请输入宠物的生日");
       } else {
         _checkPetForm();
       }
@@ -295,7 +293,7 @@ class _RegisterPet extends State<RegisterPet> {
       "petType": selectItemValue,
       "petBreed": _petBreedController.text,
       "petGender": _petGenderController.text,
-      "petDateOfBirth": DateTime(2002, 9, 2),
+      "petDateOfBirth": initialDate,
     });
     try {
       var response = await Global.dio.post('pet/', data: formData);
@@ -344,7 +342,7 @@ class _RegisterPet extends State<RegisterPet> {
             ),
             ListTile(
               title: const Text("宠物生日"),
-              subtitle: Text(_petBirthController.text),
+              subtitle: Text(initialDate.toString()),
             )
           ],
         ),
@@ -497,8 +495,12 @@ class _RegisterPet extends State<RegisterPet> {
                         ),
                       ),
                       Expanded(
-                        child: returnPetForm(
-                            _petBirthController, "生日", 0.03, 0.025),
+                        child: TextButton(
+                          child: Text(initialDate.toString()),
+                          onPressed: _showDatePicker,
+                        ),
+                        // child: returnPetForm(
+                        //     _petBirthController, "生日", 0.03, 0.025),
                       ),
                     ],
                   ),
@@ -523,6 +525,21 @@ class _RegisterPet extends State<RegisterPet> {
       );
     } else {
       return const Card();
+    }
+  }
+
+  _showDatePicker() async {
+    var picker = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: DateTime(1986),
+        lastDate: DateTime(DateTime.now().year + 2),
+        locale: const Locale("zh"));
+    if (picker != null) {
+      setState(() {
+        initialDate = picker;
+        // _timeTxt.text = dataFormat.formatDate(picker, ['yyyy', '-', 'mm', '-', 'dd']);
+      });
     }
   }
 

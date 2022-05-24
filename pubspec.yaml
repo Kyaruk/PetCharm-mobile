@@ -54,6 +54,9 @@ dev_dependencies:
   dio_cookie_manager: ^2.0.0
   file: ^6.1.2
   font_awesome_flutter: ^10.1.0
+  intl: ^0.17.0
+  flutter_localizations:
+    sdk: flutter
 
 #  amap_map_fluttify: ^1.10.1
 

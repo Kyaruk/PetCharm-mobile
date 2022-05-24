@@ -36,7 +36,7 @@ class _VetPage extends State<VetPage> {
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                         builder: (context) => PostDetail(
-                          homePosts: post,
+                          post: post,
                         )
                     ),
                   ),

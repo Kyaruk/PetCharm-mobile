@@ -70,7 +70,7 @@ class _MyPostPage extends State<MyPostPage> {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (context) => PostDetail(
-                                homePosts: post,
+                                post: post,
                               )),
                     ),
                     child: Card(

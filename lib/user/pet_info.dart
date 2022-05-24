@@ -3,6 +3,7 @@ import 'package:pet_charm/main.dart';
 import 'package:pet_charm/common/toast.dart';
 import 'package:dio/dio.dart';
 import 'package:pet_charm/models/pet.dart';
+import 'package:intl/intl.dart';
 
 class PetInfo extends StatefulWidget {
   const PetInfo({Key? key}) : super(key: key);
@@ -14,7 +15,8 @@ class PetInfo extends StatefulWidget {
 }
 
 class _PetInfo extends State<PetInfo> {
-  late Pet pet = Pet("", "", "", "", "", "");
+  DateTime initialDate = DateTime.now();
+  late Pet pet = Pet(0, "", "", "", "", initialDate);
 
   @override
   void initState() {
@@ -24,24 +26,29 @@ class _PetInfo extends State<PetInfo> {
   }
 
   Future<void> getPet() async {
-    var response = await Global.dio.get(
-      'pet/',
-    );
-    if (response.statusCode == 200) {
-      if (response.data['success']) {
-        setState(() {
-          pet = Pet.fromJson(response.data['pet']);
-        });
+    try {
+      var response = await Global.dio.get(
+        'pet/',
+      );
+      if (response.statusCode == 200) {
+        if (response.data['success']) {
+          setState(() {
+            pet = Pet.fromJson(response.data['pet']);
+            initialDate = pet.petDateOfBirth;
+          });
+        } else {
+          Navigator.of(context).pushNamed("register_page");
+        }
       } else {
-        Navigator.of(context).pushNamed("register_page");
+        setState(() {
+          pet = Pet(
+              0, "petName", "petType", "petBreed", "petGender", initialDate);
+        });
+        // print("ERROR:\nhttp请求出现错误，错误编码为:" + response.statusCode.toString());
+        toast("Http Error: " + response.statusCode.toString());
       }
-    } else {
-      setState(() {
-        pet = Pet(
-            "petId", "petName", "petType", "petBreed", "petGender", "petAge");
-      });
-      // print("ERROR:\nhttp请求出现错误，错误编码为:" + response.statusCode.toString());
-      toast("Http Error: " + response.statusCode.toString());
+    } on DioError catch (e) {
+      throw Exception(e.response?.data);
     }
   }
 
@@ -122,7 +129,15 @@ class _PetInfo extends State<PetInfo> {
               _showModalBottomSheetBreed),
           buildItem(pet.petGender, const Icon(Icons.pets, color: Colors.red),
               _showModalBottomSheetGender),
-          buildItem(pet.petDateOfBirth, const Icon(Icons.pets, color: Colors.red),
+          buildItem(
+              DateFormat("yyyy-MM-dd").format(pet.petDateOfBirth).toString() +
+                  " - 距今：" +
+                  DateTime.now()
+                      .difference(pet.petDateOfBirth)
+                      .inDays
+                      .toString() +
+                  "天",
+              const Icon(Icons.pets, color: Colors.red),
               _showModalBottomSheetAge),
         ],
       ),
@@ -238,6 +253,7 @@ class _PetInfo extends State<PetInfo> {
                     setState(() {
                       pet.setPetBreed(_textEditingController.text);
                     });
+                    Navigator.pop(context);
                   },
                 ),
               ],
@@ -266,6 +282,7 @@ class _PetInfo extends State<PetInfo> {
                     setState(() {
                       pet.setPetGender(_textEditingController.text);
                     });
+                    Navigator.pop(context);
                   },
                 ),
               ],
@@ -274,32 +291,20 @@ class _PetInfo extends State<PetInfo> {
     );
   }
 
-  void _showModalBottomSheetAge() {
-    TextEditingController _textEditingController = TextEditingController();
-
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-            padding: MediaQuery.of(context).viewInsets,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _textEditingController,
-                  maxLines: 5,
-                ),
-                TextButton(
-                  child: const Text("Save"),
-                  onPressed: () {
-                    setState(() {
-                      pet.setTime(_textEditingController.text);
-                    });
-                  },
-                ),
-              ],
-            ));
-      },
-    );
+  _showModalBottomSheetAge() async {
+    var picker = await showDatePicker(
+        context: context,
+        initialDate: initialDate,
+        firstDate: DateTime(1986),
+        lastDate: DateTime(DateTime.now().year + 2),
+        locale: const Locale("zh"));
+    if (picker != null) {
+      setState(() {
+        initialDate = picker;
+        pet.setTime(initialDate);
+        // _timeTxt.text = dataFormat.formatDate(picker, ['yyyy', '-', 'mm', '-', 'dd']);
+      });
+    }
   }
 
   void checkPetInfo(Pet pet) {
@@ -307,19 +312,23 @@ class _PetInfo extends State<PetInfo> {
   }
 
   _checkPetInfo(Pet pet) async {
-    FormData formData = FormData.fromMap({
-      "petName": pet.petName,
-      "petType": pet.petType,
-      "petBreed": pet.petBreed,
-      "petGender": pet.petGender,
-      "petAge": pet.petDateOfBirth
-    });
-    var response = await Global.dio.post('pet/', data: formData);
-    if (response.statusCode == 200) {
-      Navigator.pop(context);
-    } else {
-      // print("ERROR:\nhttp请求出现错误，错误编码为:" + response.statusCode.toString());
-      toast("Http Error: " + response.statusCode.toString());
+    try {
+      FormData formData = FormData.fromMap({
+        "petName": pet.petName,
+        "petType": pet.petType,
+        "petBreed": pet.petBreed,
+        "petGender": pet.petGender,
+        "petDateOfBirth": pet.petDateOfBirth
+      });
+      var response = await Global.dio.post('pet/', data: formData);
+      if (response.statusCode == 200) {
+        Navigator.pop(context);
+      } else {
+        // print("ERROR:\nhttp请求出现错误，错误编码为:" + response.statusCode.toString());
+        toast("Http Error: " + response.statusCode.toString());
+      }
+    } on DioError catch (e) {
+      throw Exception(e.response?.data);
     }
   }
 }

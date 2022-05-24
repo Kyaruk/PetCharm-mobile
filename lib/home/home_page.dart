@@ -55,7 +55,7 @@ class _HomePage extends State<HomePage> {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (context) => PostDetail(
-                            homePosts: post,
+                            post: post,
                           )),
                     ),
                     child: Card(

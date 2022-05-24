@@ -50,10 +50,10 @@ class CommentDetail extends StatelessWidget {
     );
   }
 
-  Object returnPic() {
+  Widget returnPic() {
     if(comment.commentIconUrl == "") {
-      return AssetImage("assets/images/User.jpg");
+      return Image.asset("assets/images/User.jpg");
     }
-    return NetworkImage(comment.commentIconUrl);
+    return Image.network(comment.commentIconUrl);
   }
 }

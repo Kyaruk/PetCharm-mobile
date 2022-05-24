@@ -1,14 +1,17 @@
+import 'package:pet_charm/models/comment.dart';
 import 'package:pet_charm/models/post.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
+import '../comment/comment_detail.dart';
+import '../comment/post_comment.dart';
 import '../main.dart';
 
 class PostDetail extends StatefulWidget {
-  final Post homePosts;
+  final Post post;
   final HomeHttp homeHttp = HomeHttp();
 
-  PostDetail({Key? key, required this.homePosts}) : super(key: key);
+  PostDetail({Key? key, required this.post}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -43,20 +46,20 @@ class _PostDetail extends State<PostDetail> {
               Card(
                 child: Column(
                   children: <Widget>[
-                    Image.network(widget.homePosts.cover),
+                    Image.network(widget.post.cover),
                     ListTile(
                       title: const Text("Title"),
-                      subtitle: Text(widget.homePosts.title),
+                      subtitle: Text(widget.post.title),
                     ),
                     ListTile(
                       title: const Text("Author-Time"),
-                      subtitle: Text(widget.homePosts.author +
+                      subtitle: Text(widget.post.author +
                           "-" +
-                          widget.homePosts.date),
+                          widget.post.date),
                     ),
                     ListTile(
                       title: const Text("Body"),
-                      subtitle: Text(widget.homePosts.content),
+                      subtitle: Text(widget.post.content),
                     ),
                     ListTile(
                       // leading: TextButton.icon(
@@ -68,7 +71,7 @@ class _PostDetail extends State<PostDetail> {
                       //       MaterialPageRoute(
                       //         builder: (context) {
                       //           return CommentPage(
-                      //             postId: homePosts.id,
+                      //             postId: post.id,
                       //           );
                       //         },
                       //       ),
@@ -79,53 +82,94 @@ class _PostDetail extends State<PostDetail> {
                         icon: const Icon(Icons.delete),
                         label: const Text("删除"),
                         onPressed: () {
-                          deletePost(widget.homePosts.id);
+                          deletePost(widget.post.id);
                         },
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                  height: Global.deviceSize.height * 0.5,
-                  child: FutureBuilder(
-                    future: widget.homeHttp.getPostComment(widget.homePosts.id),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<dynamic> snapshot) {
-                      if (snapshot.hasData) {
-                        List<Post> posts = snapshot.data;
-                        return ListView(
-                          children: posts
-                              .map((Post post) => Card(
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(15.0),
-                                          topRight: Radius.circular(15.0),
-                                          bottomLeft: Radius.circular(15.0),
-                                          bottomRight: Radius.circular(15.0))),
-                                  child: ListTile(
+              FutureBuilder(
+                future: widget.homeHttp.getPostComment(widget.post.id),
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if (snapshot.hasData) {
+                    List<Comment> comments = snapshot.data;
+                    return Container(
+                      constraints: BoxConstraints(
+                          maxHeight: Global.deviceSize.height * 0.5),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: comments.length,
+                        itemBuilder: (context, index) {
+                          Comment comment = comments[index];
+                          return Card(
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(15.0),
+                                      topRight: Radius.circular(15.0),
+                                      bottomLeft: Radius.circular(15.0),
+                                      bottomRight: Radius.circular(15.0))),
+                              child: Column(
+                                children: [
+                                  ListTile(
                                     leading: CircleAvatar(
-                                      backgroundImage: NetworkImage(post.cover),
+                                      backgroundImage:
+                                      ((comment.commentIconUrl == "")
+                                          ? const AssetImage(
+                                          "assets/images/User.jpg")
+                                          : NetworkImage(
+                                          comment.commentIconUrl))
+                                      as ImageProvider,
                                     ),
-                                    title: Text(post.title),
-                                    subtitle: Text(post.author),
+                                    title: Text(comment.commentAuthor),
+                                    subtitle: Text(comment.commentDate),
                                     trailing:
-                                        const Icon(Icons.arrow_forward_ios),
+                                    const Icon(Icons.arrow_forward_ios),
                                     onTap: () => Navigator.of(context).push(
                                       MaterialPageRoute(
-                                          builder: (context) => PostDetail(
-                                                homePosts: post,
-                                              )),
+                                          builder: (context) => CommentDetail(
+                                            comment: comment,
+                                          )),
                                     ),
-                                  )))
-                              .toList(),
-                        );
-                      }
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                                  ),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: Global.deviceSize.width * 0.185,
+                                      ),
+                                      Text(comment.commentContent,
+                                        style: const TextStyle(
+                                            fontSize: 16
+                                        ),),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: Global.deviceSize.height * 0.015,
+                                  ),
+                                ],
+                              ));
+                        },
+                      ),
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+              TextButton(onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return PostComment(
+                        postId: widget.post.id,
                       );
                     },
-                  ))
+                  ),
+                );
+              }, child: const Text("发布评论"))
             ],
           ),
         ),
@@ -154,24 +198,25 @@ class _PostDetail extends State<PostDetail> {
 }
 
 class HomeHttp {
-  Future<List<Post>> getPostComment(int postId) async {
+  Future<List<Comment>> getPostComment(int postId) async {
     try {
       // FormData formData = FormData.fromMap({"postId": postId});
       // var response = await Global.dio.post('comment/list/', data: formData);
 
       Map<String, dynamic> map = <String, dynamic>{};
       map["postId"] = postId;
-      var response = await Global.dio.get("comment/list/", queryParameters: map);
+      var response =
+          await Global.dio.get("comment/list/", queryParameters: map);
 
       if (response.statusCode == 200) {
         List<dynamic> body = response.data['comments'];
 
-        List<Post> news =
-            body.map((dynamic item) => Post.fromJson(item)).toList();
+        List<Comment> comments =
+            body.map((dynamic item) => Comment.fromJson(item)).toList();
 
-        return news;
+        return comments;
       } else {
-        throw "Can't get posts.";
+        throw "Can't get comments.";
       }
     } on DioError catch (e) {
       throw Exception(e.response?.data);

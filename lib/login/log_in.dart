@@ -244,7 +244,7 @@ class _Login extends State<Login> {
           // Global.globalUser.userId = "${_userNameController.text}";
 
           toast("Welcome Back");
-          Navigator.pushNamed(context, "home_page");
+          Navigator.of(context).pushReplacementNamed("home_page");
         } else {
           toast("Wrong Password, Try Again");
         }

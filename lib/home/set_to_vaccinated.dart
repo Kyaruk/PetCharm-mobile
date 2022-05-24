@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:pet_charm/main.dart';
 import 'package:pet_charm/models/pet.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:dio/dio.dart';
 
 class VaccinationDetail extends StatelessWidget {
@@ -102,7 +100,7 @@ class VaccinationDetail extends StatelessWidget {
                 ),
                 ListTile(
                   title: const Text("Body"),
-                  subtitle: Text(pet.petDateOfBirth),
+                  subtitle: Text(pet.petDateOfBirth.toString()),
                 ),
                 Card(
                   child: Row(
